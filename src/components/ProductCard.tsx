@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { useCart } from "@/contexts/CartContext";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useState } from "react";
 
@@ -20,8 +21,20 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const { addItem } = useCart();
   const discount = product.originalPrice ? 
     Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      inStock: product.inStock,
+    });
+  };
 
   return (
     <Card className="group cursor-pointer transition-all duration-300 hover:shadow-elegant hover:-translate-y-1 bg-gradient-card border-border/50">
@@ -72,6 +85,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               size="sm" 
               className="w-full"
               disabled={!product.inStock}
+              onClick={handleAddToCart}
             >
               <ShoppingCart className="w-4 h-4 mr-2" />
               Add to Cart
